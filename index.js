@@ -1,11 +1,28 @@
-var readline = require('readline');
-var Game = require('./game',32);
+var Game = require('./game');
+var clc = require('cli-color');
+var program = require('commander')
+	.version("1.0.0")
+	.usage('[options] <values ...>')
+	.option('-i, --interactive','Interactive Mode')
+	.option('-s, --size <size>','size of the grid', 6)
+	.parse(process.argv);
 
 var main = function(){
-	var game = new Game(64);
-	game.init();
-	game.run();
-	game.update();
+
+	INTERACTIVE_MODE = program.interactive;
+
+	var game = new Game(program.size);
+
+	if(INTERACTIVE_MODE){
+		game.init(false);
+		game.run();
+		game.update();
+	}
+	else{
+		game.init(false);
+		game.run();
+		game.update();
+	}
 };
 
 main();
