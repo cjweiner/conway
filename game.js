@@ -80,8 +80,8 @@ function Game(size){
 		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y+1 > size-1 ? 0 : y+1].alive)amount++;
 		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y-1 < 0 ? size-1 : y-1].alive)amount++;
 		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y-1 < 0 ? size-1 : y-1].alive)amount++;	
-		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y])amount++;
-		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y])amount++;
+		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y].alive)amount++;
+		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y].alive)amount++;
 		if(cell[x] && cell[x][y+1 > size-1 ? 0 : y+1].alive)amount++;
 		if(cell[x] && cell[x][y-1 < 0 ? size-1 : y-1].alive)amount++;
 
@@ -106,27 +106,35 @@ function Game(size){
 	update = function(generationCount){
 		clear();
 	  	console.log('\t\t\t~~~~~~~~~~~~Conway\'s game of life Generation: '+generationCount+'~~~~~~~~~~~~\n');
+
+	  	var nextGenGrid = [];
+
 	  	for(var x = 0; x < size; x++){
+	  		nextGenGrid[x] = [];
 	  		for(var y = 0; y < size; y++){
 	  			var count = countNeighbors(x,y);
+	  			var alive = 0;
 	  			if(cell[x][y].alive){
 		  			//loneliness or overcrowding
 		  			if(count < 2 || count > 3){
-		  				cell[x][y].alive = 0;
+		  				alive = 0;
 		  			}
 		  			//reproduction or stasis
 		  			if(count === 3 || count === 2){
-		  				cell[x][y].alive = 1;
+		  				alive = 1;
 		  			}
 	  			}
-	  			// else{
-	  			// 	if(count === 3){
-	  			// 		cell[x][y].alive = 1;
-	  			// 	}
-	  			// }
+	  			else{
+	  				if(count === 3){
+	  					alive = 1;
+	  				}
+	  			}
+
+	  			nextGenGrid[x][y] = {"alive": alive};
 	  		}
 	  	}
 
+	  	cell = nextGenGrid;
 	  	display();
 	};
 
@@ -135,7 +143,7 @@ function Game(size){
 		setInterval(function(){
 			update(generationCount); 
 			generationCount++;
-		}, 300);
+		}, 500);
 	};
 
 }
