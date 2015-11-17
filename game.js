@@ -21,17 +21,9 @@ function Game(size,rowSize){
 			}
 		}
 		else if(type){
-			switch(type){
-				case 'oscillators':{
-					cell = getGridFromFile(type);
-					console.log("size: "+ size);
-					console.log(cell);
-					break;
-				}
-				default:{
-
-				}
-			}
+			cell = getGridFromFile(type);
+			console.log("size: "+ size);
+			console.log(cell);
 		}
 		else{
 
@@ -47,20 +39,15 @@ function Game(size,rowSize){
 	this.update = function(){
 		var generationCount = 0;
 		setInterval(function(){
-			update(generationCount); 
+			updateGrid(generationCount); 
 			generationCount++;
 		}, 500);
 	};
 
 	getGridFromFile = function(type){
-		switch(type){
-			case 'oscillators':{
-				var obj = JSON.parse(fs.readFileSync('./'+type+'.json', 'utf8'));
-				return parseGridData(obj);
-			}
-			default:{
-
-			}
+		if(type){
+			var obj = JSON.parse(fs.readFileSync('./'+type+'.json', 'utf8'));
+			return parseGridData(obj);
 		}
 	};
 
@@ -101,7 +88,7 @@ function Game(size,rowSize){
 		}
 	};
 
-	update = function(generationCount){
+	updateGrid = function(generationCount){
 		clear();
 	  	console.log('\t\t\t~~~~~~~~~~~~Conway\'s game of life Generation: '+generationCount+'~~~~~~~~~~~~\n');
 

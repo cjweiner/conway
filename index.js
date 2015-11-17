@@ -8,17 +8,25 @@ var program = require('commander')
 	.option('-t, --type <type>','type of cells eg. oscillators')
 	.parse(process.argv);
 
+var promptly = require('promptly');
+
 var main = function(){
 
 	INTERACTIVE_MODE = program.interactive;
 	TYPE_MODE = program.type;
 
-
 	var game = new Game(program.size);
 	if(INTERACTIVE_MODE){
-		game.init(false);
-		game.run();
-		game.update();
+		promptly.prompt('Column Size: ', function(err, value){
+			game.size = value;
+			promptly.prompt('Row Size: ',function(err, value){
+				game.rowSize = value;
+				game.init(true);
+				game.run();
+				game.update();
+			});
+		});
+
 	}
 	else if(TYPE_MODE){
 		var type = TYPE_MODE;
@@ -27,7 +35,7 @@ var main = function(){
 		game.update();
 	}
 	else{
-		game.init(false);
+		game.init(true);
 		game.run();
 		game.update();
 	}

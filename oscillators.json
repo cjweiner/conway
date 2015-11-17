@@ -4,17 +4,14 @@
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
-		{"alive": 0},
 		{"alive": 0}],
 	[
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
-		{"alive": 0},
 		{"alive": 0}],
 	[
-		{"alive": 0},
 		{"alive": 0},
 		{"alive": 1},
 		{"alive": 1},
@@ -25,27 +22,11 @@
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
-		{"alive": 0},
 		{"alive": 0}],
 	[
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
 		{"alive": 0},
-		{"alive": 0},
-		{"alive": 0}],
-	[
-		{"alive": 0},
-		{"alive": 0},
-		{"alive": 0},
-		{"alive": 0},
-		{"alive": 0},
-		{"alive": 0}],
-	[
-		{"alive": 0},
-		{"alive": 0},
-		{"alive": 1},
-		{"alive": 1},
-		{"alive": 1},
 		{"alive": 0}]
 ]
