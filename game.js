@@ -1,68 +1,40 @@
 var color = require('cli-color');
-
+var fs = require('fs');
 
 var clear = function(){
   	process.stdout.write('\033c');
 };
 
-function Game(size){
+function Game(size,rowSize){
 	var cell = [];
 	this.size = size;
+	this.rowSize = rowSize ? rowSize : size;
 
-	this.init = function(random){
+	this.init = function(random, type){
+		console.log(type);
 		if(random){
 			for(var i=0; i < size; i++){
 				cell[i] = [];
-				for(var j=0; j < size; j++){
+				for(var j=0; j < rowSize; j++){
 					cell[i][j] = {"alive": Math.round(Math.random())};
 				}
 			}
 		}
+		else if(type){
+			switch(type){
+				case 'oscillators':{
+					cell = getGridFromFile(type);
+					console.log("size: "+ size);
+					console.log(cell);
+					break;
+				}
+				default:{
+
+				}
+			}
+		}
 		else{
-			
-			cell[0] = [],cell[1] = [],cell[2] = [],cell[3] = [],cell[4] = [],cell[5] = [];
 
-			cell[0][0] = {"alive": 0};
-			cell[1][0] = {"alive": 0};
-			cell[2][0] = {"alive": 0};
-			cell[3][0] = {"alive": 0};
-			cell[4][0] = {"alive": 0};
-			cell[5][0] = {"alive": 0};
-
-			cell[0][1] = {"alive": 0};
-			cell[1][1] = {"alive": 0};
-			cell[2][1] = {"alive": 0};
-			cell[3][1] = {"alive": 0};
-			cell[4][1] = {"alive": 0};
-			cell[5][1] = {"alive": 0};
-
-			cell[0][2] = {"alive": 0};
-			cell[1][2] = {"alive": 0};
-			cell[2][2] = {"alive": 0};
-			cell[3][2] = {"alive": 1};
-			cell[4][2] = {"alive": 0};
-			cell[5][2] = {"alive": 0};
-
-			cell[0][3] = {"alive": 0};
-			cell[1][3] = {"alive": 0};
-			cell[2][3] = {"alive": 0};
-			cell[3][3] = {"alive": 1};
-			cell[4][3] = {"alive": 0};
-			cell[5][3] = {"alive": 0};
-
-			cell[0][4] = {"alive": 0};
-			cell[1][4] = {"alive": 0};
-			cell[2][4] = {"alive": 0};
-			cell[3][4] = {"alive": 1};
-			cell[4][4] = {"alive": 0};
-			cell[5][4] = {"alive": 0};
-
-			cell[0][5] = {"alive": 0};
-			cell[1][5] = {"alive": 0};
-			cell[2][5] = {"alive": 0};
-			cell[3][5] = {"alive": 0};
-			cell[4][5] = {"alive": 0};
-			cell[5][5] = {"alive": 0};
 		}
 	};
 
@@ -72,18 +44,44 @@ function Game(size){
 	  	display();
 	};
 
+	this.update = function(){
+		var generationCount = 0;
+		setInterval(function(){
+			update(generationCount); 
+			generationCount++;
+		}, 500);
+	};
+
+	getGridFromFile = function(type){
+		switch(type){
+			case 'oscillators':{
+				var obj = JSON.parse(fs.readFileSync('./'+type+'.json', 'utf8'));
+				return parseGridData(obj);
+			}
+			default:{
+
+			}
+		}
+	};
+
+	parseGridData = function(data){
+		size = data.length;
+		rowSize = data[0].length;
+		console.log(rowSize);
+		return data;
+	};
+
 	countNeighbors = function(x,y){
 		var amount = 0;
-		debugger;
 		//check for alive cells around current cell
-		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y+1 > size-1 ? 0 : y+1].alive)amount++;
-		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y+1 > size-1 ? 0 : y+1].alive)amount++;
-		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y-1 < 0 ? size-1 : y-1].alive)amount++;
-		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y-1 < 0 ? size-1 : y-1].alive)amount++;	
+		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y+1 > rowSize-1 ? 0 : y+1].alive)amount++;
+		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y+1 > rowSize-1 ? 0 : y+1].alive)amount++;
+		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y-1 < 0 ? rowSize-1 : y-1].alive)amount++;
+		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y-1 < 0 ? rowSize-1 : y-1].alive)amount++;	
 		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y].alive)amount++;
 		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y].alive)amount++;
-		if(cell[x] && cell[x][y+1 > size-1 ? 0 : y+1].alive)amount++;
-		if(cell[x] && cell[x][y-1 < 0 ? size-1 : y-1].alive)amount++;
+		if(cell[x] && cell[x][y+1 > rowSize-1 ? 0 : y+1].alive)amount++;
+		if(cell[x] && cell[x][y-1 < 0 ? rowSize-1 : y-1].alive)amount++;
 
 		return amount;
 	};
@@ -91,7 +89,7 @@ function Game(size){
 	display = function(){
 		for(var i=0; i < size; i++){
 			var line = '';
-			for(var j=0; j< size; j++){
+			for(var j=0; j< rowSize; j++){
 				if(cell[i][j].alive){
 					line = line + 'o ' ;
 				}
@@ -111,7 +109,7 @@ function Game(size){
 
 	  	for(var x = 0; x < size; x++){
 	  		nextGenGrid[x] = [];
-	  		for(var y = 0; y < size; y++){
+	  		for(var y = 0; y < rowSize; y++){
 	  			var count = countNeighbors(x,y);
 	  			var alive = 0;
 	  			if(cell[x][y].alive){
@@ -136,14 +134,6 @@ function Game(size){
 
 	  	cell = nextGenGrid;
 	  	display();
-	};
-
-	this.update = function(){
-		var generationCount = 0;
-		setInterval(function(){
-			update(generationCount); 
-			generationCount++;
-		}, 500);
 	};
 
 }
