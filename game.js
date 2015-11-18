@@ -1,5 +1,6 @@
 var color = require('cli-color');
 var fs = require('fs');
+var _ = require('underscore');
 
 var clear = function(){
   	process.stdout.write('\033c');
@@ -24,7 +25,7 @@ function Game(colSize,rowSize){
 			}
 		}
 		else if(type){
-			cell = this.getGridFromFile(type);
+            cell = this.getGridFromFile(type);
 		}
 		else{
 
@@ -40,23 +41,28 @@ function Game(colSize,rowSize){
 
 	this.update = function(){
 		var generationCount = 0;
-		setInterval(function(obj){
-			obj.updateGrid(generationCount); 
+		var timerId = setInterval(function(obj){
+            var exit = obj.updateGrid(generationCount);
+            if (exit) {
+                clear();
+                console.log('All cells are dead stopping simulation...');
+                clearInterval(timerId);
+                return;
+            }
 			generationCount++;
-		}, 500,this);
+        }, 500, this);
 	};
 
 	this.getGridFromFile = function(type){
 		if(type){
 			var obj = JSON.parse(fs.readFileSync('./'+type+'.json', 'utf8'));
-			return parseGridData(obj);
+			return this.parseGridData(obj);
 		}
 	};
 
-	parseGridData = function(data){
-		size = data.length;
-		rowSize = data[0].length;
-		console.log(rowSize);
+	this.parseGridData = function(data){
+		this.colSize = data.length;
+		this.rowSize = data[0].length;
 		return data;
 	};
 
@@ -124,7 +130,9 @@ function Game(colSize,rowSize){
 	  			nextGenGrid[x][y] = {"alive": alive};
 	  		}
 	  	}
-
+        if (_.isEqual(cell,nextGenGrid)) {
+            return true;
+        }
 	  	cell = nextGenGrid;
 	  	this.display();
 	};

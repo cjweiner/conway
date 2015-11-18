@@ -38,7 +38,7 @@ var main = function(){
 	else{
 		game.init(true);
 		game.run();
-		game.update();
+        game.update();
 	}
 };
 
