@@ -5,25 +5,26 @@ var clear = function(){
   	process.stdout.write('\033c');
 };
 
-function Game(size,rowSize){
+function Game(colSize,rowSize){
 	var cell = [];
-	this.size = size;
-	this.rowSize = rowSize ? rowSize : size;
+	this.colSize = colSize;
+	this.rowSize = rowSize ? rowSize : colSize;
 
 	this.init = function(random, type){
-		console.log(type);
+		console.log("init rowSize:" + this.rowSize);
+		console.log("random:" + random);
 		if(random){
-			for(var i=0; i < size; i++){
+			console.log('hitting random seed loop');
+			for(var i=0; i < this.colSize; i++){
 				cell[i] = [];
-				for(var j=0; j < rowSize; j++){
+				for(var j=0; j < this.rowSize; j++){
+					console.log("colSize:"+this.colSize);
 					cell[i][j] = {"alive": Math.round(Math.random())};
 				}
 			}
 		}
 		else if(type){
-			cell = getGridFromFile(type);
-			console.log("size: "+ size);
-			console.log(cell);
+			cell = this.getGridFromFile(type);
 		}
 		else{
 
@@ -33,18 +34,19 @@ function Game(size,rowSize){
 	this.run = function(){
 	  	clear();
 	  	console.log('\t\t\t~~~~~~~~~~~~Conway\'s game of life~~~~~~~~~~~~\n');
-	  	display();
+	  	console.log("run colSize,rowSize:" +this.colSize +','+this.rowSize);
+	  	this.display();
 	};
 
 	this.update = function(){
 		var generationCount = 0;
-		setInterval(function(){
-			updateGrid(generationCount); 
+		setInterval(function(obj){
+			obj.updateGrid(generationCount); 
 			generationCount++;
-		}, 500);
+		}, 500,this);
 	};
 
-	getGridFromFile = function(type){
+	this.getGridFromFile = function(type){
 		if(type){
 			var obj = JSON.parse(fs.readFileSync('./'+type+'.json', 'utf8'));
 			return parseGridData(obj);
@@ -58,8 +60,10 @@ function Game(size,rowSize){
 		return data;
 	};
 
-	countNeighbors = function(x,y){
+	this.countNeighbors = function(x,y){
 		var amount = 0;
+		var rowSize = this.rowSize;
+		var size = this.colSize;
 		//check for alive cells around current cell
 		if(cell[x+1 > size-1 ? 0 : x+1] && cell[x+1 > size-1 ? 0 : x+1][y+1 > rowSize-1 ? 0 : y+1].alive)amount++;
 		if(cell[x-1 < 0 ? size-1 : x-1] && cell[x-1 < 0 ? size-1 : x-1][y+1 > rowSize-1 ? 0 : y+1].alive)amount++;
@@ -73,10 +77,11 @@ function Game(size,rowSize){
 		return amount;
 	};
 
-	display = function(){
-		for(var i=0; i < size; i++){
+	this.display = function(){
+		console.log("display func colSize,rowSize:"+this.colSize+','+this.rowSize);
+		for(var i=0; i < this.colSize; i++){
 			var line = '';
-			for(var j=0; j< rowSize; j++){
+			for(var j=0; j< this.rowSize; j++){
 				if(cell[i][j].alive){
 					line = line + 'o ' ;
 				}
@@ -84,20 +89,21 @@ function Game(size,rowSize){
 					line = line + '. ' ;
 				}
 			}
+			
 			console.log(color.white.bgBlue(line));
 		}
 	};
 
-	updateGrid = function(generationCount){
+	this.updateGrid = function(generationCount){
 		clear();
 	  	console.log('\t\t\t~~~~~~~~~~~~Conway\'s game of life Generation: '+generationCount+'~~~~~~~~~~~~\n');
 
 	  	var nextGenGrid = [];
 
-	  	for(var x = 0; x < size; x++){
+	  	for(var x = 0; x < this.colSize; x++){
 	  		nextGenGrid[x] = [];
-	  		for(var y = 0; y < rowSize; y++){
-	  			var count = countNeighbors(x,y);
+	  		for(var y = 0; y < this.rowSize; y++){
+	  			var count = this.countNeighbors(x,y);
 	  			var alive = 0;
 	  			if(cell[x][y].alive){
 		  			//loneliness or overcrowding
@@ -120,7 +126,7 @@ function Game(size,rowSize){
 	  	}
 
 	  	cell = nextGenGrid;
-	  	display();
+	  	this.display();
 	};
 
 }

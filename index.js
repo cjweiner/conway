@@ -18,9 +18,10 @@ var main = function(){
 	var game = new Game(program.size);
 	if(INTERACTIVE_MODE){
 		promptly.prompt('Column Size: ', function(err, value){
-			game.size = value;
+			game.colSize = value;
 			promptly.prompt('Row Size: ',function(err, value){
 				game.rowSize = value;
+				console.log("entered row size:"+game.rowSize);
 				game.init(true);
 				game.run();
 				game.update();
