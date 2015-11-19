@@ -37,8 +37,9 @@ var main = function(){
 		var type = TYPE_MODE;
 		game.init(false, type);
         game.run();
-        if(type !== "still")
-		    game.update();
+        if (type !== "still") {
+            game.update();
+        }
 	}
 	else{
 		game.init(true);
