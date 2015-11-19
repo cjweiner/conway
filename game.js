@@ -2,7 +2,8 @@ var color = require('cli-color');
 var fs = require('fs');
 var _ = require('underscore');
 
-var clear = function(){
+var clear = function (){
+    color.reset;
   	process.stdout.write('\033c');
 };
 
@@ -33,9 +34,8 @@ function Game(colSize,rowSize){
 	};
 
 	this.run = function(){
-	  	clear();
+        clear();
 	  	console.log('\t\t\t~~~~~~~~~~~~Conway\'s game of life~~~~~~~~~~~~\n');
-	  	console.log("run colSize,rowSize:" +this.colSize +','+this.rowSize);
 	  	this.display();
 	};
 
@@ -84,19 +84,18 @@ function Game(colSize,rowSize){
 	};
 
 	this.display = function(){
-		console.log("display func colSize,rowSize:"+this.colSize+','+this.rowSize);
 		for(var i=0; i < this.colSize; i++){
 			var line = '';
 			for(var j=0; j< this.rowSize; j++){
 				if(cell[i][j].alive){
-					line = line + 'o ' ;
+					line = color.xterm(255).bgXterm(66)(line + '  ');
 				}
 				else{
-					line = line + '. ' ;
+					line = color.xterm(255).bgXterm(255)(line + '  ');
 				}
 			}
 			
-			console.log(color.white.bgBlue(line));
+			console.log(color.xterm(202).bgXterm(255)(line));
 		}
 	};
 
