@@ -3,7 +3,7 @@ var fs = require('fs');
 var _ = require('underscore');
 
 var clear = function (){
-    color.reset;
+    
   	process.stdout.write('\033c');
 };
 
